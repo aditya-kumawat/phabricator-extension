@@ -1,0 +1,30 @@
+.Chips-wrapper {
+    display: flex;
+    gap: 4px;
+}
+
+.Chip {
+    background: darkcyan;
+    padding: 4px 8px;
+    border-radius: 10px;
+    color: white;
+    font-size: 12px;
+}
+
+.Overlay {
+    position: fixed;
+    top: 40px;
+    right: 16px;
+    height: 200px;
+    width: 250px;
+    overflow: auto;
+    background: cyan;
+    border: 1px solid black;
+    z-index: 100;
+}
+
+.Checkbox-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
