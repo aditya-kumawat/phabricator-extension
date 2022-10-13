@@ -1,10 +1,11 @@
-import { fetchGetFileReviewers, ReviewerFilesMapping } from './modules/diff';
+import { fetchGetFileReviewers, FileMapping, FileReviewersMapping, ReviewerFilesMapping } from './modules/diff';
 
 console.log('Content script works!');
 
-const diffId = window.location.pathname.slice(1);
+// const diffId = window.location.pathname.slice(1);
+(window as any).activeGroups = new Set();
 
-const addOverlay = (reviewerFilesMapping: ReviewerFilesMapping) => {
+const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMapping: ReviewerFilesMapping, fileMapping: FileMapping) => {
   const wrapper = document.createElement('div');
   wrapper.classList.add('Overlay');
 
@@ -24,6 +25,27 @@ const addOverlay = (reviewerFilesMapping: ReviewerFilesMapping) => {
     input.setAttribute('name', 'group[]');
     input.setAttribute('value', name);
     input.setAttribute('id', name);
+    input.addEventListener('change', (event) => {
+      if (event.target.checked) {
+        (window as any).activeGroups.add(name);
+      } else {
+        (window as any).activeGroups.delete(name);
+      }
+
+      document.querySelectorAll('.differential-file-icon-header').forEach(headerEl => {
+        const filePath = headerEl.childNodes[1].textContent ?? '';
+        const viewOptionsEl = headerEl.parentElement?.querySelector('[data-sigil="differential-view-options"]');
+        viewOptionsEl?.dispatchEvent(new Event('click'));
+        const shouldExpand = (window as any).activeGroups.size === 0 || Array.from(fileReviewersMapping[filePath])?.some(reviewer => (window as any).activeGroups.has(reviewer));
+        const actionEl = document.querySelector(shouldExpand ? '.fa-expand' : '.fa-compress');
+        if (actionEl) {
+          actionEl.parentElement?.querySelector('a')?.dispatchEvent(new Event('click'));
+        } else {
+          viewOptionsEl?.dispatchEvent(new Event('click'));
+        }
+      });
+      document.body.click();
+    });
 
     const label = document.createElement('label');
     label.setAttribute('for', name);
@@ -34,12 +56,12 @@ const addOverlay = (reviewerFilesMapping: ReviewerFilesMapping) => {
 
     const backBtn = document.createElement('button');
     backBtn.innerHTML = 'Back';
-    backBtn.setAttribute('data-id', `${reviewerFilesMapping[name].length - 1}`);
+    backBtn.setAttribute('data-id', `${reviewerFilesMapping[name].size - 1}`);
     backBtn.addEventListener('click', () => {
       const index = backBtn.getAttribute('data-id') ?? '';
-      const { link } = reviewerFilesMapping[name][+index];
+      const { link } = fileMapping[Array.from(reviewerFilesMapping[name])[+index]];
       window.location.href = link;
-      backBtn.setAttribute('data-id', `${(+index - 1) % reviewerFilesMapping[name].length}`);
+      backBtn.setAttribute('data-id', `${(+index - 1) % reviewerFilesMapping[name].size}`);
     });
 
     const nextBtn = document.createElement('button');
@@ -47,9 +69,9 @@ const addOverlay = (reviewerFilesMapping: ReviewerFilesMapping) => {
     nextBtn.setAttribute('data-id', '0');
     nextBtn.addEventListener('click', () => {
       const index = nextBtn.getAttribute('data-id') ?? '';
-      const { link } = reviewerFilesMapping[name][+index];
+      const { link } = fileMapping[Array.from(reviewerFilesMapping[name])[+index]];
       window.location.href = link;
-      nextBtn.setAttribute('data-id', `${(+index + 1) % reviewerFilesMapping[name].length}`);
+      nextBtn.setAttribute('data-id', `${(+index + 1) % reviewerFilesMapping[name].size}`);
     });
 
     navitgationBtns.appendChild(backBtn);
@@ -66,7 +88,7 @@ const addOverlay = (reviewerFilesMapping: ReviewerFilesMapping) => {
 }
 
 fetchGetFileReviewers()
-  .then(([fileReviewersMapping, reviewerFilesMapping]) => {
+  .then(([fileReviewersMapping, reviewerFilesMapping, fileMapping]) => {
     document.querySelectorAll('.differential-file-icon-header').forEach(headerEl => {
       const filePath = headerEl.textContent ?? '';
 
@@ -80,13 +102,7 @@ fetchGetFileReviewers()
       });
 
       headerEl.appendChild(chipsWrapperEl);
-
-      const viewOptionsEl = headerEl.parentElement?.querySelector('[data-sigil="differential-view-options"]');
-      viewOptionsEl?.dispatchEvent(new Event('click'));
-      const collapseFileEl = document.querySelector('.fa-compress')?.parentElement?.querySelector('a');
-      console.log({ headerEl, viewOptionsEl, collapseFileEl });
-      collapseFileEl?.dispatchEvent(new Event('click'));
     })
 
-    addOverlay(reviewerFilesMapping);
+    addOverlay(fileReviewersMapping, reviewerFilesMapping, fileMapping);
   })
