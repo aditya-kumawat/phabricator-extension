@@ -36,7 +36,7 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
         const filePath = headerEl.childNodes[1].textContent ?? '';
         const viewOptionsEl = headerEl.parentElement?.querySelector('[data-sigil="differential-view-options"]');
         viewOptionsEl?.dispatchEvent(new Event('click'));
-        const shouldExpand = (window as any).activeGroups.size === 0 || Array.from(fileReviewersMapping[filePath])?.some(reviewer => (window as any).activeGroups.has(reviewer));
+        const shouldExpand = (window as any).activeGroups.size === 0 || Array.from(fileReviewersMapping[filePath] ?? [])?.some(reviewer => (window as any).activeGroups.has(reviewer));
         const actionEl = document.querySelector(shouldExpand ? '.fa-expand' : '.fa-compress');
         if (actionEl) {
           actionEl.parentElement?.querySelector('a')?.dispatchEvent(new Event('click'));
@@ -51,8 +51,16 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
     label.setAttribute('for', name);
     label.innerHTML = name;
 
-    const navitgationBtns = document.createElement('div');
-    navitgationBtns.classList.add('NavigationBtns-wrapper');
+    const actionBtns = document.createElement('div');
+    actionBtns.classList.add('NavigationBtns-wrapper');
+
+    const loadBtn = document.createElement('button');
+    loadBtn.innerHTML = 'Load';
+    loadBtn.addEventListener('click', () => {
+      files?.forEach(filePath => {
+        document.querySelector(`a[href="#diff-${fileMapping[filePath].link.slice(1)}"]`)?.dispatchEvent(new Event('click'));
+      })
+    });
 
     const backBtn = document.createElement('button');
     backBtn.innerHTML = 'Back';
@@ -74,9 +82,10 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
       nextBtn.setAttribute('data-id', `${(+index + 1) % reviewerFilesMapping[name].size}`);
     });
 
-    navitgationBtns.appendChild(backBtn);
-    navitgationBtns.appendChild(nextBtn);
-    label.appendChild(navitgationBtns);
+    actionBtns.appendChild(loadBtn);
+    actionBtns.appendChild(backBtn);
+    actionBtns.appendChild(nextBtn);
+    label.appendChild(actionBtns);
 
     checkbox.appendChild(input);
     checkbox.appendChild(label);
