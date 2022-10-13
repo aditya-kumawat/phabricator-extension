@@ -10,10 +10,11 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
   const wrapper = document.createElement('div');
   wrapper.classList.add('Overlay');
 
-  const tocAnchorEl = document.createElement('a');
-  tocAnchorEl.setAttribute('href', '#toc');
-  tocAnchorEl.innerHTML = 'Navigate to files list';
-  wrapper.appendChild(tocAnchorEl);
+  const tocBtn = document.createElement('button');
+  tocBtn.innerHTML = 'Navigate to files list';
+  tocBtn.addEventListener('click', () => {
+    window.location.href = '#toc';
+  });
 
   const checkboxWrapperEl = document.createElement('div');
   checkboxWrapperEl.classList.add('Checkbox-wrapper');
@@ -56,6 +57,7 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
     actionBtns.classList.add('NavigationBtns-wrapper');
 
     const loadBtn = document.createElement('button');
+    loadBtn.classList.add('small');
     loadBtn.innerHTML = 'Load';
     loadBtn.addEventListener('click', () => {
       files?.forEach(filePath => {
@@ -64,6 +66,7 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
     });
 
     const backBtn = document.createElement('button');
+    backBtn.classList.add('small');
     backBtn.innerHTML = 'Back';
     backBtn.setAttribute('data-id', `${reviewerFilesMapping[name].size - 1}`);
     backBtn.addEventListener('click', () => {
@@ -74,6 +77,7 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
     });
 
     const nextBtn = document.createElement('button');
+    nextBtn.classList.add('small');
     nextBtn.innerHTML = 'Next';
     nextBtn.setAttribute('data-id', '0');
     nextBtn.addEventListener('click', () => {
@@ -93,6 +97,7 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
 
     checkboxWrapperEl.append(checkbox)
   });
+  wrapper.appendChild(tocBtn);
   wrapper.append(checkboxWrapperEl);
   document.body.append(wrapper);
 }

@@ -13,18 +13,36 @@
 
 .Overlay {
     position: fixed;
-    top: 40px;
+    bottom: 16px;
     right: 16px;
-    height: 200px;
+    height: 300px;
     width: 250px;
-    overflow: auto;
-    background: cyan;
-    border: 1px solid black;
+    background: white;
+    border: 2px solid black;
     z-index: 100;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .Checkbox-wrapper {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    overflow: auto;
+}
+
+.Checkbox {
+    display: flex;
+    gap: 4px;
+    border: 1px solid gray;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.NavigationBtns-wrapper {
+    display: flex;
+    gap: 4px;
 }
