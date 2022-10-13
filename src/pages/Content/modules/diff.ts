@@ -68,3 +68,5 @@ export const fetchGetFileReviewers = async () =>
         })
         return [fileReviewersMapping, reviewerFilesMapping, fileMapping] as const;
     })
+
+export const getIsAuthor = () => document.querySelector(`.phabricator-core-user-menu[href="${document.querySelector('.phui-head-thing-view .phui-handle')?.getAttribute('href')}"]`);

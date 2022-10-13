@@ -1,8 +1,9 @@
-import { fetchGetFileReviewers, FileMapping, FileReviewersMapping, ReviewerFilesMapping } from './modules/diff';
+import { fetchGetFileReviewers, FileMapping, FileReviewersMapping, getIsAuthor, ReviewerFilesMapping } from './modules/diff';
 
 console.log('Content script works!');
 
 // const diffId = window.location.pathname.slice(1);
+(window as any).isAuthor = getIsAuthor();
 (window as any).activeGroups = new Set();
 
 const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMapping: ReviewerFilesMapping, fileMapping: FileMapping) => {
@@ -96,22 +97,24 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
   document.body.append(wrapper);
 }
 
-fetchGetFileReviewers()
-  .then(([fileReviewersMapping, reviewerFilesMapping, fileMapping]) => {
-    document.querySelectorAll('.differential-file-icon-header').forEach(headerEl => {
-      const filePath = headerEl.textContent ?? '';
+if (!(window as any).isAuthor) {
+  fetchGetFileReviewers()
+    .then(([fileReviewersMapping, reviewerFilesMapping, fileMapping]) => {
+      document.querySelectorAll('.differential-file-icon-header').forEach(headerEl => {
+        const filePath = headerEl.textContent ?? '';
 
-      const chipsWrapperEl = document.createElement('div');
-      chipsWrapperEl.classList.add('Chips-wrapper');
-      fileReviewersMapping[filePath]?.forEach(name => {
-        const chipEl = document.createElement('span');
-        chipEl.classList.add('Chip');
-        chipEl.innerHTML = name;
-        chipsWrapperEl.append(chipEl);
-      });
+        const chipsWrapperEl = document.createElement('div');
+        chipsWrapperEl.classList.add('Chips-wrapper');
+        fileReviewersMapping[filePath]?.forEach(name => {
+          const chipEl = document.createElement('span');
+          chipEl.classList.add('Chip');
+          chipEl.innerHTML = name;
+          chipsWrapperEl.append(chipEl);
+        });
 
-      headerEl.appendChild(chipsWrapperEl);
-    })
+        headerEl.appendChild(chipsWrapperEl);
+      })
 
-    addOverlay(fileReviewersMapping, reviewerFilesMapping, fileMapping);
-  })
+      addOverlay(fileReviewersMapping, reviewerFilesMapping, fileMapping);
+    });
+}
