@@ -68,23 +68,23 @@ const addOverlay = (fileReviewersMapping: FileReviewersMapping, reviewerFilesMap
     const backBtn = document.createElement('button');
     backBtn.classList.add('small');
     backBtn.innerHTML = 'Back';
-    backBtn.setAttribute('data-id', `${reviewerFilesMapping[name].size - 1}`);
+    backBtn.setAttribute('data-id', '0');
     backBtn.addEventListener('click', () => {
       const index = backBtn.getAttribute('data-id') ?? '';
       const { link } = fileMapping[Array.from(reviewerFilesMapping[name])[+index]];
       window.location.href = link;
-      backBtn.setAttribute('data-id', `${(+index - 1) % reviewerFilesMapping[name].size}`);
+      backBtn.setAttribute('data-id', `${(+index + 1) % reviewerFilesMapping[name].size}`);
     });
 
     const nextBtn = document.createElement('button');
     nextBtn.classList.add('small');
     nextBtn.innerHTML = 'Next';
-    nextBtn.setAttribute('data-id', '0');
+    nextBtn.setAttribute('data-id', `${reviewerFilesMapping[name].size - 1}`);
     nextBtn.addEventListener('click', () => {
       const index = nextBtn.getAttribute('data-id') ?? '';
       const { link } = fileMapping[Array.from(reviewerFilesMapping[name])[+index]];
       window.location.href = link;
-      nextBtn.setAttribute('data-id', `${(+index + 1) % reviewerFilesMapping[name].size}`);
+      nextBtn.setAttribute('data-id', `${(reviewerFilesMapping[name].size + +index - 1) % reviewerFilesMapping[name].size}`);
     });
 
     actionBtns.appendChild(loadBtn);
