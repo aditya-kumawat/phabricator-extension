@@ -121,5 +121,6 @@ if (!(window as any).isAuthor) {
       })
 
       addOverlay(fileReviewersMapping, reviewerFilesMapping, fileMapping);
-    });
+    })
+    .catch(console.log);
 }

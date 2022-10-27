@@ -81,4 +81,7 @@ export const fetchHeraldMapping = async () =>
                 },
                 {}
             );
+        })
+        .catch(() => {
+            console.log("Fetching hearld mapping failed");
         });
