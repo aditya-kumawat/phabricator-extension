@@ -1,0 +1,48 @@
+.Chips-wrapper {
+    display: flex;
+    gap: 4px;
+}
+
+.Chip {
+    background: darkgrey;
+    padding: 4px 8px;
+    border-radius: 10px;
+    color: white;
+    font-size: 12px;
+}
+
+.Overlay {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    height: 300px;
+    width: 250px;
+    background: white;
+    border: 2px solid black;
+    z-index: 100;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.Checkbox-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: auto;
+}
+
+.Checkbox {
+    display: flex;
+    gap: 4px;
+    border: 1px solid gray;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.NavigationBtns-wrapper {
+    display: flex;
+    gap: 4px;
+}
